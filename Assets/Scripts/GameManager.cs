@@ -1,7 +1,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +9,7 @@ public class GameManager : MonoBehaviour
     public Rigidbody ball;
 
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI highScoreText;
     public GameObject gameOverText;
 
     private bool m_Started = false;
@@ -28,11 +28,16 @@ public class GameManager : MonoBehaviour
         {
             for (int x = 0; x < perLine; ++x)
             {
-                Vector3 position = new Vector3(-1.5f + step * x, 2.5f + i * 0.3f, 0);
+                Vector3 position = new(-1.5f + step * x, 2.5f + i * 0.3f, 0);
                 var brick = Instantiate(brickPrefab, position, Quaternion.identity);
                 brick.pointValue = pointCountArray[i];
                 brick.onDestroyed.AddListener(AddPoint);
             }
+        }
+
+        if (MainManager.instance != null && MainManager.instance.highScorePlayerName != null)
+        {
+            SetHighScore(MainManager.instance.highScorePlayerName, MainManager.instance.highScorePlayerScore);
         }
     }
 
@@ -44,7 +49,7 @@ public class GameManager : MonoBehaviour
             {
                 m_Started = true;
                 float randomDirection = Random.Range(-1.0f, 1.0f);
-                Vector3 forceDir = new Vector3(randomDirection, 1, 0);
+                Vector3 forceDir = new(randomDirection, 1, 0);
                 forceDir.Normalize();
 
                 ball.transform.SetParent(null);
@@ -66,9 +71,30 @@ public class GameManager : MonoBehaviour
         scoreText.text = $"Score : {m_Points}";
     }
 
+    void SetHighScore(string text, int value)
+    {
+        highScoreText.text = $"Best Score : {text} ({value})";
+    }
+
     public void GameOver()
     {
         m_GameOver = true;
+
+        if (MainManager.instance != null)
+        {
+            if (m_Points > MainManager.instance.playerScore)
+            {
+                MainManager.instance.playerScore = m_Points;
+                if (MainManager.instance.playerScore > MainManager.instance.highScorePlayerScore)
+                {
+                    MainManager.instance.highScorePlayerName = MainManager.instance.playerName;
+                    MainManager.instance.highScorePlayerScore = MainManager.instance.playerScore;
+                    MainManager.instance.SaveHighScore();
+                    SetHighScore(MainManager.instance.playerName, MainManager.instance.playerScore);
+                }
+            }
+        }
+
         gameOverText.SetActive(true);
     }
 }
