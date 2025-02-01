@@ -23,11 +23,6 @@ public class MainManager : MonoBehaviour
         LoadHighScore();
     }
 
-    public void SetPlayerName(string name)
-    {
-        playerName = $"{name}";
-    }
-
     [System.Serializable]
     class SaveData
     {

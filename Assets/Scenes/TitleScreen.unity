@@ -701,8 +701,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58d02828a0e80134fa831a3cf540f750, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instance: {fileID: 0}
   playerName: 
+  highScorePlayerName: 
+  playerScore: 0
+  highScorePlayerScore: 0
 --- !u!1 &610430368
 GameObject:
   m_ObjectHideFlags: 0
@@ -941,8 +943,8 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 527245716}
-        m_TargetAssemblyTypeName: MainManager, Assembly-CSharp
+      - m_Target: {fileID: 2137539499}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
         m_MethodName: SetPlayerName
         m_Mode: 0
         m_Arguments:
@@ -2031,6 +2033,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00eb096a5cc3d4647a1dc132a99e29c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerNameInputField: {fileID: 796896369}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

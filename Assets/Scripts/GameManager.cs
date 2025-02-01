@@ -58,10 +58,17 @@ public class GameManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
+            // Reload the game is Space is pressed
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             }
+        }
+
+        // Go back to Title Screen if Esc is pressed
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
         }
     }
 
