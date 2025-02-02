@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -6,9 +7,27 @@ public class MainManager : MonoBehaviour
     public static MainManager instance;
 
     public string playerName;
-    public string highScorePlayerName;
-    public int playerScore;
-    public int highScorePlayerScore;
+    public List<SaveData> highScores;
+    private string filePath;
+
+    [System.Serializable]
+    public class SaveData
+    {
+        public string name;
+        public int score;
+
+        public SaveData(string _name, int _score)
+        {
+            name = _name;
+            score = _score;
+        }
+    }
+
+    [System.Serializable]
+    private class SerializableSaveData
+    {
+        public List<SaveData> scores;
+    }
 
     private void Awake()
     {
@@ -19,40 +38,52 @@ public class MainManager : MonoBehaviour
         }
 
         instance = this;
+        filePath = Application.persistentDataPath + "/highScores.json";
         DontDestroyOnLoad(gameObject);
-        LoadHighScore();
+        LoadHighScores();
     }
 
-    [System.Serializable]
-    class SaveData
+    public void AddScore(string playerName, int score)
     {
-        public string name;
-        public int score;
-    }
+        highScores.Add(new SaveData(playerName, score));
+        highScores.Sort((a, b) => b.score.CompareTo(a.score)); // Sort descending
 
-    public void SaveHighScore()
-    {
-        SaveData data = new()
+        // Keep only top 10
+        if (highScores.Count > 10)
         {
-            name = highScorePlayerName,
-            score = highScorePlayerScore
-        };
-
-        string json = JsonUtility.ToJson(data);
-
-        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
-    }
-
-    public void LoadHighScore()
-    {
-        string path = Application.persistentDataPath + "/savefile.json";
-        if (File.Exists(path))
-        {
-            string json = File.ReadAllText(Application.persistentDataPath + "/savefile.json");
-            SaveData data = JsonUtility.FromJson<SaveData>(json);
-
-            highScorePlayerName = data.name;
-            highScorePlayerScore = data.score;
+            highScores.RemoveRange(10, highScores.Count - 10);
         }
+        SaveHighScores();
+    }
+
+    public void SaveHighScores()
+    {
+        SerializableSaveData data = new()
+        {
+            scores = highScores
+        };
+        string json = JsonUtility.ToJson(data);
+        File.WriteAllText(filePath, json);
+    }
+
+    public void LoadHighScores()
+    {
+        if (File.Exists(filePath))
+        {
+            string json = File.ReadAllText(filePath);
+            SerializableSaveData data = JsonUtility.FromJson<SerializableSaveData>(json);
+
+            highScores = data.scores;
+        }
+    }
+
+    public override string ToString()
+    {
+        string highScoreText = "";
+        for (int i = 0; i < highScores.Count; i++)
+        {
+            highScoreText += $"{i + 1}.\t{highScores[i].score}\t{highScores[i].name}\n";
+        }
+        return highScoreText;
     }
 }

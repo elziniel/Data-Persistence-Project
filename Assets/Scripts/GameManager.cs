@@ -35,9 +35,9 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (MainManager.instance != null && MainManager.instance.highScorePlayerName != null)
+        if (MainManager.instance != null && MainManager.instance.highScores.Count > 0)
         {
-            SetHighScore(MainManager.instance.highScorePlayerName, MainManager.instance.highScorePlayerScore);
+            SetHighScore(MainManager.instance.highScores[0].name, MainManager.instance.highScores[0].score);
         }
     }
 
@@ -89,17 +89,7 @@ public class GameManager : MonoBehaviour
 
         if (MainManager.instance != null)
         {
-            if (m_Points > MainManager.instance.playerScore)
-            {
-                MainManager.instance.playerScore = m_Points;
-                if (MainManager.instance.playerScore > MainManager.instance.highScorePlayerScore)
-                {
-                    MainManager.instance.highScorePlayerName = MainManager.instance.playerName;
-                    MainManager.instance.highScorePlayerScore = MainManager.instance.playerScore;
-                    MainManager.instance.SaveHighScore();
-                    SetHighScore(MainManager.instance.playerName, MainManager.instance.playerScore);
-                }
-            }
+            MainManager.instance.AddScore(MainManager.instance.playerName, m_Points);
         }
 
         gameOverText.SetActive(true);
